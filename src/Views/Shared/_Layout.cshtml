@@ -1,0 +1,106 @@
+﻿           @using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var isAdmin = await UserManager.IsInRoleAsync(currentUser, "Admin");
+    var isHost = await UserManager.IsInRoleAsync(currentUser, "Host");
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persona Bar Example</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Persona Bar Styles */
+        .persona-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #343a40;
+            color: white;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .persona-bar .nav-link {
+            color: #ffffff;
+        }
+        .persona-bar .nav-link:hover {
+            color: #f8f9fa;
+        }
+        .persona-bar.collapsed {
+            transform: translateX(-250px);
+        }
+        .persona-bar .nav-item {
+            margin-top: 10px;
+        }
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+        /* Add some responsive design */
+        @media (max-width: 768px) {
+            .persona-bar {
+                transform: translateX(-250px);
+            }
+            .persona-bar.collapsed {
+                transform: translateX(0);
+            }
+            .content {
+                margin-left: 0;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="persona-bar" id="personaBar">
+        <div class="p-3">
+            <h4>Admin Tools</h4>
+<ul class="nav flex-column">
+    <li class="nav-item">
+        <a class="nav-link active" href="#">Dashboard</a>
+    </li>
+    @if (isAdmin || isHost)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="#">Manage Users</a>
+        </li>
+    }
+    @if (isHost)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="#">Site Settings</a>
+        </li>
+    }
+    <li class="nav-item">
+        <a class="nav-link" href="#">Content Management</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Reports</a>
+    </li>
+</ul>      
+        </div>
+    </div>
+
+    <div class="content">
+        <button class="btn btn-primary" id="togglePersonaBar">Toggle Persona Bar</button>
+        <h1>Welcome to the Admin Dashboard</h1>
+        <p>Manage your website here.</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle Persona Bar
+        document.getElementById('togglePersonaBar').addEventListener('click', function() {
+            const personaBar = document.getElementById('personaBar');
+            personaBar.classList.toggle('collapsed');
+        });
+    </script>
+</body>
+</html>
